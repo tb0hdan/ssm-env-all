@@ -29,7 +29,11 @@ func main() {
 		log.Panicf("Could not run GetParametersByPath: %+v\n", err)
 	}
 
-	binary, err := exec.LookPath("env")
+	lookup := "env"
+	if len(flag.Args()) > 0 {
+		lookup = flag.Args()[0]
+	}
+	binary, err := exec.LookPath(lookup)
 	if err != nil {
 		log.Panicf("Command error: %+v\n", err)
 	}
