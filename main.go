@@ -14,13 +14,21 @@ import (
 
 var param_path = flag.String("path", "/", "Parameter path, separated by slashes: /env/role/param")
 
-func populateEnvFromPath(path string) (result []string) {
+func populateEnvFromPath(path, token string) (result []string) {
 	s := ssm.New(session.New())
 	input := &ssm.GetParametersByPathInput{}
+	if token != "" {
+		input.SetNextToken(token)
+	}
 	input.SetPath(path)
 	input.SetRecursive(true)
 	input.SetWithDecryption(true)
 	out, err := s.GetParametersByPath(input)
+
+	if out.NextToken != nil {
+		result = populateEnvFromPath(path, *out.NextToken)
+	}
+
 	if err != nil {
 		log.Panicf("Could not run GetParametersByPath: %+v\n", err)
 	}
@@ -52,7 +60,7 @@ func main() {
 	env := os.Environ()
 
 	for _, path := range strings.Split(*param_path, ",") {
-		for _, envvar := range populateEnvFromPath(path) {
+		for _, envvar := range populateEnvFromPath(path, "") {
 			env = append(env, envvar)
 		}
 	}
