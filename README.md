@@ -1,6 +1,9 @@
 # ssm-env-all
 Get ALL environment variables from Amazon Parameter Store
 
+## SSM Doc
+
+https://aws.amazon.com/blogs/compute/managing-secrets-for-amazon-ecs-applications-using-parameter-store-and-iam-roles-for-tasks/
 
 ## Usage:
 
